@@ -1,42 +1,72 @@
-import React from 'react';
-import {
-  ChakraProvider,
-  Box,
-  Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
-  theme,
-} from '@chakra-ui/react';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
-import { Logo } from './Logo';
+// App.js
 
-function App() {
-  return (
-    <ChakraProvider theme={theme}>
-      <Box textAlign="center" fontSize="xl">
-        <Grid minH="100vh" p={3}>
-          <ColorModeSwitcher justifySelf="flex-end" />
-          <VStack spacing={8}>
-            <Logo h="40vmin" pointerEvents="none" />
-            <Text>
-              Edit <Code fontSize="xl">src/App.js</Code> and save to reload.
-            </Text>
-            <Link
-              color="teal.500"
-              href="https://chakra-ui.com"
-              fontSize="2xl"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn Chakra
-            </Link>
-          </VStack>
-        </Grid>
+import React, { Component } from 'react';
+import Overview from './components/Overview';
+import uniqid from 'uniqid';
+import { Box } from '@chakra-ui/react';
+import { Input } from '@chakra-ui/react';
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+} from '@chakra-ui/react';
+import { Button, ButtonGroup } from '@chakra-ui/react';
+
+class App extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      task: {
+        text: '',
+        id: uniqid(),
+      },
+      tasks: [],
+    };
+  }
+
+  handleChange = e => {
+    this.setState({
+      task: {
+        text: e.target.value,
+        id: this.state.task.id,
+      },
+    });
+  };
+
+  onSubmitTask = e => {
+    e.preventDefault();
+    this.setState({
+      tasks: this.state.tasks.concat(this.state.task),
+      task: {
+        text: '',
+        id: uniqid(),
+      },
+    });
+  };
+
+  render() {
+    const { task, tasks } = this.state;
+
+    return (
+      <Box>
+        <form onSubmit={this.onSubmitTask}>
+          <label htmlFor="taskInput">Enter task</label>
+          <Input
+            onChange={this.handleChange}
+            value={task.text}
+            type="text"
+            id="taskInput"
+          />
+          <Button type="submit" colorScheme="blue">
+            Add Task
+          </Button>
+        </form>
+        <Overview tasks={tasks} />
       </Box>
-    </ChakraProvider>
-  );
+    );
+  }
 }
 
 export default App;
